@@ -155,6 +155,35 @@ export function playSfx(name: SfxName): void {
   }
 }
 
+/**
+ * Scoring feedback: a tick whose pitch RISES with each scored step (the core Balatro
+ * audiovisual synergy — number jumps synced to rising pitch).
+ */
+export function scoreTick(step: number, kind: 'base' | 'mult' | 'special' = 'base'): void {
+  if (!ctx) return;
+  const semis = Math.min(36, step * 2);
+  const root = kind === 'mult' ? 392 : kind === 'special' ? 523.25 : 294;
+  const freq = root * Math.pow(2, semis / 12);
+  blip(freq, 0.09, kind === 'mult' ? 'sawtooth' : 'square', 0.16);
+}
+
+/** Rapid "counting up" tick used while the Doubt total tallies. */
+export function countTick(progress: number): void {
+  if (!ctx) return;
+  blip(600 + progress * 900, 0.025, 'square', 0.06);
+}
+
+/** The big payoff hit when a score resolves; fuller and brighter for bigger scores. */
+export function scorePayoff(magnitude: number): void {
+  if (!ctx || !sfxGain) return;
+  const intensity = Math.min(1, magnitude / 250);
+  [0, 4, 7, 12, 16].forEach((s, i) =>
+    blip(330 * Math.pow(2, s / 12), 0.55, 'triangle', 0.12 + 0.14 * intensity, i * 0.045),
+  );
+  blip(98, 0.5, 'sine', 0.22 + 0.22 * intensity); // bass thunk
+  if (intensity > 0.6) blip(1046, 0.4, 'square', 0.1, 0.1); // sparkle for big hits
+}
+
 // ── Music: per-act drone + sparse arpeggio ──
 
 const ACT_ROOTS = [146.83, 130.81, 110.0]; // D3, C3, A2 — calmer → graver

@@ -2,6 +2,7 @@ import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { render, screen, fireEvent, cleanup } from '@testing-library/react';
 import { App } from '../App';
 import { useGame } from './store/gameStore';
+import { defaultMeta } from '../save';
 
 beforeEach(() => {
   try {
@@ -9,7 +10,14 @@ beforeEach(() => {
   } catch {
     /* ignore */
   }
-  useGame.setState({ appScreen: 'title', run: null, overlay: null, pendingMode: 'standard' });
+  useGame.setState({
+    appScreen: 'title',
+    run: null,
+    overlay: null,
+    pendingMode: 'standard',
+    cascade: null,
+    meta: defaultMeta(),
+  });
 });
 
 afterEach(() => cleanup());
@@ -37,6 +45,36 @@ describe('App smoke', () => {
     fireEvent.click(screen.getByText(/Begin Trial/));
     fireEvent.click(screen.getByText(/^Deck \(/));
     expect(screen.getByRole('heading', { name: /Your Deck/ })).toBeInTheDocument();
+  });
+
+  it('renders the scoring cascade overlay when a cascade is set', () => {
+    const meta = defaultMeta();
+    meta.settings.reduceMotion = true; // jump straight to the resolved state
+    useGame.setState({
+      meta,
+      cascade: {
+        result: {
+          base: 10,
+          mult: 3,
+          doubt: 30,
+          steps: [
+            {
+              kind: 'card',
+              label: 'Sworn Testimony',
+              baseDelta: 10,
+              multDelta: 0,
+              baseAfter: 10,
+              multAfter: 1,
+            },
+          ],
+        },
+        fromDoubt: 0,
+        target: 100,
+      },
+    });
+    render(<App />);
+    expect(screen.getByText(/\+30/)).toBeInTheDocument();
+    expect(screen.getByText('Argument presented')).toBeInTheDocument();
   });
 
   it('renders the trial screen and tutorial without console errors', () => {

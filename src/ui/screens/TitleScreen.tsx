@@ -17,6 +17,7 @@ export function TitleScreen() {
   return (
     <div className="screen center-col fade-in">
       <h1 className="game-title">{STRINGS.title}</h1>
+      <div className="title-rule" />
       <p className="game-subtitle">{STRINGS.tagline}</p>
       <div className="col" style={{ width: 300 }}>
         {saved && (

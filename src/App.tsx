@@ -5,6 +5,7 @@ import { CharacterSelectScreen } from './ui/screens/CharacterSelectScreen';
 import { SettingsScreen } from './ui/screens/SettingsScreen';
 import { CodexScreen } from './ui/screens/CodexScreen';
 import { RunRouter } from './ui/screens/RunRouter';
+import { CascadeOverlay } from './ui/components/CascadeOverlay';
 import { initAudio, setVolumes, playMusic } from './audio';
 
 export function App() {
@@ -68,6 +69,7 @@ export function App() {
     <div className={rootCls} style={style}>
       {content}
       <div className="crt-overlay" />
+      <CascadeOverlay />
     </div>
   );
 }

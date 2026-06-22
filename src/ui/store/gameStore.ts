@@ -32,8 +32,14 @@ import {
   restStudy,
   playMapMotion,
 } from '../../engine';
-import type { RunMode, RunState } from '../../engine';
+import type { RunMode, RunState, ScoringResult } from '../../engine';
 import { playSfx } from '../../audio';
+
+export interface CascadeData {
+  result: ScoringResult;
+  fromDoubt: number;
+  target: number;
+}
 import {
   loadMeta,
   saveMeta,
@@ -54,12 +60,15 @@ export interface GameStore {
   meta: MetaState;
   /** Mode selected on the title screen, consumed by character select. */
   pendingMode: RunMode;
+  /** Active scoring cascade to animate (null when idle). */
+  cascade: CascadeData | null;
   /** Bumped whenever settings change so subscribers (audio) react. */
   tick: number;
 
   setAppScreen: (s: AppScreen) => void;
   setOverlay: (o: Overlay) => void;
   setPendingMode: (m: RunMode) => void;
+  clearCascade: () => void;
 
   startRun: (characterId: string, mode: RunMode, seedLabel: string, appeal: number) => void;
   resumeRun: () => void;
@@ -135,11 +144,13 @@ export const useGame = create<GameStore>((set, get) => {
     run: null,
     meta: loadMeta(),
     pendingMode: 'standard',
+    cascade: null,
     tick: 0,
 
     setAppScreen: (s) => set({ appScreen: s, overlay: null }),
     setOverlay: (o) => set({ overlay: o }),
     setPendingMode: (m) => set({ pendingMode: m }),
+    clearCascade: () => set({ cascade: null }),
 
     startRun: (characterId, mode, seedLabel, appeal) => {
       const run = createRun({ content: DB, seedLabel, mode, characterId, appeal });
@@ -168,8 +179,14 @@ export const useGame = create<GameStore>((set, get) => {
       act((r) => void runPlayAction(r, DB, uid));
     },
     present: () => {
+      const cur = get().run;
+      if (!cur?.encounter || cur.encounter.phase !== 'player') return;
+      const fromDoubt = cur.encounter.doubt;
+      const target = cur.encounter.doubtTarget;
       act((r) => void runPresent(r, DB));
-      playSfx('score');
+      const after = get().run;
+      const result = after?.encounter?.lastScoring ?? null;
+      if (result) set({ cascade: { result, fromDoubt, target } });
     },
     discard: (uids) => {
       playSfx('shuffle');

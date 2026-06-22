@@ -2,6 +2,23 @@
 
 Iteration log. Newest at top.
 
+## Iteration 8 — Game-feel & visual polish pass
+Grounded in Balatro/StS "juice" research (high-density audiovisual feedback, rising-pitch
+number jumps, exponential payoff, tactile visual packaging):
+- **Juicy scoring cascade** (`CascadeOverlay`): reveals each card/Precedent contribution in
+  sequence, jumps the running base×mult, counts the Doubt total up with rising-pitch ticks,
+  ends in a particle burst + screen shake + payoff chord scaled to the score. Plays on the
+  winning blow too (store defers via a `cascade` state). Skippable; reduce-motion/fast-mode
+  aware.
+- **Audio:** added `scoreTick` (pitch rises per step), `countTick`, `scorePayoff`.
+- **Premium cards:** parchment texture, type/rarity frames, animated foil sheen on rares,
+  3D hover tilt + glow, glossy cost orb + chip-style stat badges, deal-in animation.
+- **Art direction:** animated noir-courtroom backdrop with drifting dust + vignette,
+  gold-gradient glowing title, glossy meters, tactile buttons, pulsing prosecution intent.
+- **Map:** rebuilt with absolute layout + SVG connector lines (paths now visible), with the
+  open path animated.
+- 248 tests green (incl. cascade render test); typecheck/lint clean; build + preview OK.
+
 ## Iteration 7 — Phase 9 (QA + ship)
 - Compile-time exhaustiveness check on the effect resolver (no op can be unhandled).
 - Per-card / per-Precedent coverage tests (179) exercise every effect against real content.
