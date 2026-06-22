@@ -53,7 +53,7 @@ export {
   runPresent,
   runDiscard,
   runEndTurn,
-  runUseCombatMotion,
+  runPlayCombatMotion,
   syncCombat,
   takeCardReward,
   skipCardReward,
@@ -76,7 +76,7 @@ export {
   removeCardFromDeck,
   upgradeCard,
   addPrecedent,
-  useMapMotion,
+  playMapMotion,
   applyOutcome,
   deckView,
 } from './run';

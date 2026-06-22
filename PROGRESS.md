@@ -2,6 +2,19 @@
 
 Iteration log. Newest at top.
 
+## Iteration 5 — Phases 4 & 5 (full UI + meta/save)
+- Zustand store bridges React to the pure engine (clone → reduce → commit; combat RNG
+  threaded via encounter.rngState). Autosaves run; resumes on relaunch.
+- Every screen built: Title, Character Select (modes + appeal + seed), Map (branching
+  node grid), Trial (hand/argument staging, live base×mult preview, intents, statuses,
+  Object/discard, motions, score flash), Reward draft, Shop (buy/sell/remove), Event,
+  Rest, Run Summary, Settings, Codex, plus in-run HUD + Deck/Precedents/Help/Menu overlays.
+- Save layer (`/save`): versioned schema + defensive migrations + corruption-safe load;
+  meta-progression (character unlocks, achievements, Appeals ladder, run history, codex
+  "seen" sets); 3 modes (standard/daily/custom).
+- Noir-parchment + CRT art-direction CSS baseline; keyword tooltips. 66 tests incl. UI
+  smoke (title→run→overlay) with no console errors.
+
 ## Iteration 4 — Phase 3 (run/map/economy)
 - Seeded StS-style branching map generator (3 acts, merging paths, typed nodes, bosses).
 - Full run state machine (`engine/run.ts`): map navigation → trials/events/shops/rest →

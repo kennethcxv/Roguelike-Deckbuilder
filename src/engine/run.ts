@@ -243,7 +243,7 @@ export function runEndTurn(run: RunState, content: ContentLookup): void {
   afterCombat(run, content);
 }
 
-export function runUseCombatMotion(run: RunState, content: ContentLookup, motionId: string): boolean {
+export function runPlayCombatMotion(run: RunState, content: ContentLookup, motionId: string): boolean {
   if (!run.encounter) return false;
   const idx = run.motions.indexOf(motionId);
   if (idx < 0) return false;
@@ -473,7 +473,7 @@ export function addPrecedent(run: RunState, precedentId: string): void {
   run.stats.precedentsGained += 1;
 }
 
-export function useMapMotion(run: RunState, content: ContentLookup, motionId: string): boolean {
+export function playMapMotion(run: RunState, content: ContentLookup, motionId: string): boolean {
   const idx = run.motions.indexOf(motionId);
   if (idx < 0) return false;
   const motion = content.getMotion(motionId);

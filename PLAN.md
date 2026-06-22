@@ -41,15 +41,15 @@ Legend: `[ ]` todo · `[x]` done · `[~]` in progress.
 - [x] integration tests: scripted encounter + full seeded run to a boss
 
 ## Phase 4 — Full UI
-- [ ] Zustand store bridging engine; screen routing
-- [ ] Screens: Title, CharacterSelect, Map, Trial, Reward, Shop, Event, Rest,
-      DeckView, PrecedentView, Settings, RunSummary, Codex
-- [ ] Keyboard support baseline; full run completable in-browser
+- [x] Zustand store bridging engine; screen routing
+- [x] Screens: Title, CharacterSelect, Map, Trial, Reward, Shop, Event, Rest,
+      DeckView, PrecedentView (overlays), Settings, RunSummary, Codex
+- [x] Keyboard support baseline; full run completable in-browser (smoke-tested)
 
 ## Phase 5 — Meta-progression, save/load, settings, modes
-- [ ] `save/` versioned schema + migration chain; autosave/resume; meta + settings
-- [ ] unlocks, Appeals 0–20 ladder, achievements, run-history stats
-- [ ] modes: Standard, Daily (date-seed), Custom Seed
+- [x] `save/` versioned schema + migration chain; autosave/resume; meta + settings
+- [x] unlocks, Appeals 0–20 ladder, achievements, run-history stats
+- [x] modes: Standard, Daily (date-seed), Custom Seed
 
 ## Phase 6 — Audio, art, juice, tutorial, codex, a11y
 - [ ] `audio/` WebAudio SFX + adaptive per-act music + volumes
