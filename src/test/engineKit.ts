@@ -9,8 +9,10 @@ import { KW } from '../engine/keywords';
 import type {
   CardDef,
   CardInstance,
+  CharacterDef,
   ContentLookup,
   EncounterState,
+  EnemyDef,
   KeywordDef,
   PlayerCombat,
   PrecedentDef,
@@ -70,10 +72,14 @@ export function makeContent(
   precedents: PrecedentDef[] = [],
   keywords: KeywordDef[] = CANONICAL_KEYWORDS,
   tuning: Tuning = DEFAULT_TUNING,
+  enemies: EnemyDef[] = [],
+  characters: CharacterDef[] = [],
 ): ContentLookup {
   const cardMap = new Map(cards.map((c) => [c.id, c]));
   const precMap = new Map(precedents.map((p) => [p.id, p]));
   const kwMap = new Map(keywords.map((k) => [k.id, k]));
+  const enemyMap = new Map(enemies.map((e) => [e.id, e]));
+  const charMap = new Map(characters.map((c) => [c.id, c]));
   return {
     tuning,
     getCard(id) {
@@ -94,8 +100,22 @@ export function makeContent(
       return p;
     },
     getPrecedentOrNull: (id) => precMap.get(id),
+    getEnemy(id) {
+      const e = enemyMap.get(id);
+      if (!e) throw new Error(`Unknown enemy: ${id}`);
+      return e;
+    },
+    getEnemyOrNull: (id) => enemyMap.get(id),
+    getCharacter(id) {
+      const c = charMap.get(id);
+      if (!c) throw new Error(`Unknown character: ${id}`);
+      return c;
+    },
+    getCharacterOrNull: (id) => charMap.get(id),
     allCards: () => [...cardMap.values()],
     allPrecedents: () => [...precMap.values()],
+    allEnemies: () => [...enemyMap.values()],
+    allCharacters: () => [...charMap.values()],
   };
 }
 
@@ -138,14 +158,16 @@ export function makeEncounter(overrides: Partial<EncounterState> = {}): Encounte
     maxRounds: 10,
     doubt: 0,
     doubtTarget: 100,
-    convictionLimit: 50,
     rules: {},
     player: makePlayer(),
     prosecution: makeProsecution(),
     precedents: [],
     precedentCounters: {},
+    pendingOverrule: 0,
     rngState: 1,
     retainerEarned: 0,
+    lastScoring: null,
+    maxArgumentDoubt: 0,
     log: [],
     result: null,
     ...overrides,

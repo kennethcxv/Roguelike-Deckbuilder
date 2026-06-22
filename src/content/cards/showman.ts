@@ -1,0 +1,82 @@
+import { KW } from '../../engine/keywords';
+import type { CardDef } from '../../engine/types';
+import { mkCard } from './_factory';
+
+/** The Showman — rewards one enormous argument. Signature: argument-size and big swings. */
+export const SHOWMAN_CARDS: CardDef[] = [
+  mkCard({
+    id: 'show.openingFlair',
+    name: 'Opening with Flair',
+    character: 'showman',
+    category: 'Statement',
+    rarity: 'starter',
+    base: 6,
+    text: 'Score 6 base.',
+    flavor: 'Pause for effect.',
+  }),
+  mkCard({
+    id: 'show.theatrics',
+    name: 'Courtroom Theatrics',
+    character: 'showman',
+    category: 'Rhetoric',
+    rarity: 'starter',
+    onScore: [{ op: 'addMultPer', per: 1, source: { kind: 'argumentSize' } }],
+    text: 'Score +1 mult per card in this argument.',
+    flavor: 'And now, the dramatic reveal!',
+  }),
+  mkCard({
+    id: 'show.bombshell',
+    name: 'Bombshell',
+    character: 'showman',
+    category: 'Statement',
+    rarity: 'common',
+    focusCost: 2,
+    base: 24,
+    keywords: [KW.Stricken],
+    exhausts: true,
+    text: 'Score 24 base. Stricken.',
+    flavor: 'I have just one more question.',
+  }),
+  mkCard({
+    id: 'show.spectacle',
+    name: 'Grand Spectacle',
+    character: 'showman',
+    category: 'Closing',
+    rarity: 'uncommon',
+    focusCost: 2,
+    onScore: [{ op: 'addBasePer', per: 7, source: { kind: 'argumentSize' } }],
+    text: 'Score 7 base per card in this argument.',
+    flavor: 'Ladies and gentlemen of the jury — behold!',
+  }),
+  mkCard({
+    id: 'show.encore',
+    name: 'Encore',
+    character: 'showman',
+    category: 'Rhetoric',
+    rarity: 'uncommon',
+    focusCost: 2,
+    base: 6,
+    onScore: [
+      {
+        op: 'conditional',
+        condition: { kind: 'firstCardOfArgument' },
+        then: [{ op: 'retrigger', times: 1 }],
+      },
+    ],
+    text: 'Score 6 base. If this is the first card of the argument, score it twice.',
+    flavor: 'They demanded an encore.',
+  }),
+  mkCard({
+    id: 'show.standingOvation',
+    name: 'Standing Ovation',
+    character: 'showman',
+    category: 'Closing',
+    rarity: 'rare',
+    focusCost: 3,
+    onScore: [{ op: 'addMultPer', per: 2, source: { kind: 'argumentSize' } }],
+    keywords: [KW.Stricken],
+    exhausts: true,
+    text: 'Score +2 mult per card in this argument. Stricken.',
+    flavor: 'The whole room rose to its feet.',
+  }),
+];

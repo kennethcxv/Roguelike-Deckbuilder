@@ -15,26 +15,26 @@ Legend: `[ ]` todo · `[x]` done · `[~]` in progress.
 ## Phase 0 — Scaffold
 - [x] package.json, tsconfig(.node), vite/vitest config, eslint, prettier, gitignore
 - [x] index.html + minimal `src/main.tsx` / `App.tsx` / `styles/global.css`
-- [~] Install deps; verify dev/build/test/typecheck/lint wiring
-- [~] PLAN.md / PROGRESS.md / DECISIONS.md skeletons; initial commit
+- [x] Install deps; verify dev/build/test/typecheck/lint wiring
+- [x] PLAN.md / PROGRESS.md / DECISIONS.md skeletons; initial commit
 
 ## Phase 1 — Engine core
-- [ ] `engine/rng.ts` seeded RNG + named sub-streams (+ determinism tests)
-- [ ] `engine/types.ts` all engine types
-- [ ] `engine/keywords.ts` status registry, stacking/decay, apply/clear
-- [ ] `engine/effects.ts` typed effect ops + resolver over ordered pipeline phases
-- [ ] `engine/scoring.ts` base×mult cascade w/ step trace + final Doubt (pure)
-- [ ] tests: RNG determinism, every effect op, pipeline order, keyword interactions
+- [x] `engine/rng.ts` seeded RNG + named sub-streams (+ determinism tests)
+- [x] `engine/types.ts` all engine types
+- [x] `engine/keywords.ts` status registry, stacking/decay, apply/clear
+- [x] `engine/effects.ts` typed effect ops + resolver over ordered pipeline phases
+- [x] `engine/scoring.ts` base×mult cascade w/ step trace + final Doubt (pure)
+- [x] tests: RNG determinism, every effect op, pipeline order, keyword interactions
 
 ## Phase 2 — Content schemas + seed content + sim
-- [ ] `content/schema.ts` validators; `tuning.ts`, `strings.ts`, `keywords.ts`
-- [ ] seed content (cards, Precedents, character, enemies, boss, events)
-- [ ] `sim/` headless runner + first report; `npm run sim` works
-- [ ] content-validation test (records valid, id refs resolve)
+- [x] `content/schema.ts` validators; `tuning.ts`, `strings.ts`, `keywords.ts`
+- [x] seed content (28 cards, 17 Precedents, 3 characters, 13 enemies + bosses)
+- [x] `sim/` headless runner + report; `npm run sim` works
+- [x] content-validation test (records valid, id refs resolve)
 
 ## Phase 3 — Encounter / run / map / economy + AI
-- [ ] `engine/encounter.ts` round loop, Doubt/Conviction/target, win/lose, statuses, Witness
-- [ ] `engine/ai.ts` prosecution Intent telegraph→execute, scaling, boss mutators
+- [x] `engine/encounter.ts` round loop, Doubt/Conviction/target, win/lose, statuses, Witness
+- [x] `engine/ai.ts` prosecution Intent telegraph→execute, scaling, boss mutators
 - [ ] `engine/map.ts` seeded 3-act branching DAG
 - [ ] `engine/run.ts` run lifecycle, deck mgmt, Composure, Retainer, relics
 - [ ] `engine/rewards.ts` + `engine/shop.ts`

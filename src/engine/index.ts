@@ -19,3 +19,19 @@ export { resolveEffects, runPrecedentHooks, drawCards, pushStep } from './effect
 export { KW, KEYWORD_TUNING, applyRoundStartKeywords, tickEndOfRound } from './keywords';
 export type { CanonicalKeyword } from './keywords';
 export { scoreArgument } from './scoring';
+export { selectIntent, resolveIntent, previewIntents } from './ai';
+export {
+  createEncounter,
+  toggleArgumentCard,
+  playActionCard,
+  canPlayActionCard,
+  presentArgument,
+  canPresentArgument,
+  discardSelected,
+  canDiscard,
+  endTurn,
+  getArgumentFocusCost,
+  getCardFocusCost,
+  currentIntent,
+} from './encounter';
+export type { CreateEncounterOpts } from './encounter';

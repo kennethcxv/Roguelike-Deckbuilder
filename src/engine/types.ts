@@ -226,6 +226,65 @@ export interface Tuning {
   trialRetainerReward: number;
 }
 
+// ───────────── 4b. Enemy & character definition shapes ─────────────
+
+/** One possible prosecution action; the AI picks among these (weighted, gated). */
+export interface EnemyIntentDef {
+  weight: number;
+  kind: IntentKind;
+  label: string;
+  value: number;
+  status?: KeywordId;
+  witness?: { name: string; convictionPerRound: number; health: number };
+  effects?: Effect[];
+  condition?: Condition;
+}
+
+export interface EnemyDef {
+  id: EnemyId;
+  name: string;
+  kind: EncounterKind;
+  /** Act 1..3 this enemy belongs to (for pools and scaling). */
+  act: number;
+  baseDoubtTarget: number;
+  /** Doubt target growth applied per round automatically (prosecution presses). */
+  targetRampPerRound: number;
+  maxRounds: number;
+  rules?: EncounterRules;
+  intents: EnemyIntentDef[];
+  /** Conviction the prosecution gains automatically each round (baseline pressure). */
+  baseConvictionPerRound: number;
+  flavor?: string;
+}
+
+export type UnlockCondition =
+  | { kind: 'default' }
+  | { kind: 'winAct'; act: number }
+  | { kind: 'winRun'; character?: CharacterId }
+  | { kind: 'singleArgument'; doubt: number }
+  | { kind: 'achievement'; id: AchievementId };
+
+export interface StartingCard {
+  cardId: CardId;
+  count: number;
+}
+
+export interface CharacterDef {
+  id: CharacterId;
+  name: string;
+  title: string;
+  description: string;
+  /** One-line signature mechanic. */
+  signature: string;
+  startingDeck: StartingCard[];
+  startingPrecedents: PrecedentId[];
+  startingComposure: number;
+  startingRetainer: number;
+  unlock: UnlockCondition;
+  /** Theme accent token. */
+  color: string;
+}
+
 // ───────────── 5. Runtime instances & encounter state ─────────────
 
 export interface CardInstance {
@@ -290,7 +349,7 @@ export interface Intent {
   /** Primary magnitude (conviction gained, target raised, cards overruled, ...). */
   value: number;
   status?: KeywordId;
-  witnessId?: string;
+  witness?: { name: string; convictionPerRound: number; health: number };
   /** Arbitrary effects applied when the intent resolves. */
   effects?: Effect[];
 }
@@ -327,7 +386,7 @@ export interface EncounterState {
   maxRounds: number;
   doubt: number;
   doubtTarget: number;
-  convictionLimit: number;
+  /** Player loses when prosecution conviction reaches composure (their breaking point). */
   rules: EncounterRules;
   player: PlayerCombat;
   prosecution: ProsecutionState;
@@ -335,10 +394,16 @@ export interface EncounterState {
   precedents: PrecedentId[];
   /** Per-trial counters for precedent everyN hooks, keyed by `${id}:${phase}`. */
   precedentCounters: Record<string, number>;
+  /** Overrules queued by the prosecution, applied to the hand next round start. */
+  pendingOverrule: number;
   /** Serialized combat RNG state for deterministic resume. */
   rngState: number;
   /** Retainer earned this trial from effects (added to run on victory). */
   retainerEarned: number;
+  /** The most recent scoring result (for UI cascade / inspection). */
+  lastScoring: ScoringResult | null;
+  /** The largest single argument's Doubt this trial (for unlocks / combo detection). */
+  maxArgumentDoubt: number;
   /** Append-only log of notable combat events (for UI/debug). */
   log: string[];
   result: 'win' | 'loss' | null;
@@ -417,6 +482,12 @@ export interface ContentLookup {
   getKeywordOrNull(id: KeywordId): KeywordDef | undefined;
   getPrecedent(id: PrecedentId): PrecedentDef;
   getPrecedentOrNull(id: PrecedentId): PrecedentDef | undefined;
+  getEnemy(id: EnemyId): EnemyDef;
+  getEnemyOrNull(id: EnemyId): EnemyDef | undefined;
+  getCharacter(id: CharacterId): CharacterDef;
+  getCharacterOrNull(id: CharacterId): CharacterDef | undefined;
   allCards(): CardDef[];
   allPrecedents(): PrecedentDef[];
+  allEnemies(): EnemyDef[];
+  allCharacters(): CharacterDef[];
 }
