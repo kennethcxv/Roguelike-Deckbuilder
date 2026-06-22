@@ -44,10 +44,20 @@ describe('content validation', () => {
     }
   });
 
-  it('has a baseline of content present', () => {
-    expect(ALL_CARDS.length).toBeGreaterThanOrEqual(25);
-    expect(ALL_PRECEDENTS.length).toBeGreaterThanOrEqual(12);
+  it('meets the content targets', () => {
+    expect(ALL_CARDS.length).toBeGreaterThanOrEqual(70);
+    expect(ALL_PRECEDENTS.length).toBeGreaterThanOrEqual(45);
     expect(ALL_CHARACTERS.length).toBeGreaterThanOrEqual(3);
-    expect(ALL_ENEMIES.length).toBeGreaterThanOrEqual(10);
+    expect(ALL_EVENTS.length).toBeGreaterThanOrEqual(15);
+    const eliteBoss = ALL_ENEMIES.filter((e) => e.kind === 'elite' || e.kind === 'boss');
+    expect(eliteBoss.length).toBeGreaterThanOrEqual(12);
+    expect(ALL_MOTIONS.length).toBeGreaterThanOrEqual(10);
+  });
+
+  it('every card belongs to a known character or neutral', () => {
+    const charIds = new Set(ALL_CHARACTERS.map((c) => c.id));
+    for (const c of ALL_CARDS) {
+      expect(c.character === 'neutral' || charIds.has(c.character)).toBe(true);
+    }
   });
 });

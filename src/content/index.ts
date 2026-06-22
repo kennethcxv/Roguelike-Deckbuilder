@@ -16,15 +16,24 @@ import type {
   Rarity,
 } from '../engine/types';
 import { ALL_CARDS } from './cards';
-import { ALL_PRECEDENTS } from './precedents';
-import { ALL_ENEMIES } from './encounters';
+import { ALL_PRECEDENTS as BASE_PRECEDENTS } from './precedents';
+import { PRECEDENTS_2 } from './precedents/precedents2';
+import { ALL_ENEMIES as BASE_ENEMIES } from './encounters';
+import { ENEMIES_2 } from './encounters/encounters2';
 import { ALL_CHARACTERS } from './characters';
-import { ALL_EVENTS } from './events';
-import { ALL_MOTIONS } from './motions';
+import { ALL_EVENTS as BASE_EVENTS } from './events';
+import { EVENTS_2 } from './events/events2';
+import { ALL_MOTIONS as BASE_MOTIONS } from './motions';
+import { MOTIONS_2 } from './motions2';
 import { KEYWORDS } from './keywords';
 import { TUNING } from './tuning';
 import { STRINGS } from './strings';
 import { assertValidContent } from './schema';
+
+const ALL_PRECEDENTS: PrecedentDef[] = [...BASE_PRECEDENTS, ...PRECEDENTS_2];
+const ALL_ENEMIES: EnemyDef[] = [...BASE_ENEMIES, ...ENEMIES_2];
+const ALL_EVENTS: EventDef[] = [...BASE_EVENTS, ...EVENTS_2];
+const ALL_MOTIONS: MotionDef[] = [...BASE_MOTIONS, ...MOTIONS_2];
 
 export interface ContentDB extends ContentLookup {
   /** Neutral cards plus the given character's cards. */

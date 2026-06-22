@@ -190,4 +190,27 @@ export const ALL_PRECEDENTS: PrecedentDef[] = [
     hooks: { onCardScored: { everyN: 3, effects: [{ op: 'addBase', amount: 10 }] } },
     flavor: 'Tell them, tell them again, tell them you told them.',
   },
+  {
+    id: 'prec.amicusBrief',
+    name: 'Amicus Brief',
+    rarity: 'uncommon',
+    text: 'At the start of each argument, gain +6 base.',
+    tags: ['value'],
+    hooks: { onArgumentStart: { effects: [{ op: 'addBase', amount: 6 }] } },
+    flavor: 'A friend of the court, with opinions.',
+  },
+  {
+    id: 'prec.precedentLibrary',
+    name: 'The Precedent Library',
+    rarity: 'rare',
+    text: 'Whenever a Statement card is scored, gain +3 base.',
+    tags: ['value', 'engine'],
+    hooks: {
+      onCardScored: {
+        condition: { kind: 'cardHasCategory', category: 'Statement' },
+        effects: [{ op: 'addBase', amount: 3 }],
+      },
+    },
+    flavor: 'Every case ever tried, on one shelf.',
+  },
 ];

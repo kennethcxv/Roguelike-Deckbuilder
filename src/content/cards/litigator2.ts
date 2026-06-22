@@ -1,0 +1,250 @@
+import { KW } from '../../engine/keywords';
+import type { CardDef } from '../../engine/types';
+import { mkCard } from './_factory';
+
+/** The Litigator, second set — mult-scaling and Sustained. Aggressive multiplicative blowups. */
+export const LITIGATOR_CARDS_2: CardDef[] = [
+  // ── Mult adders ──────────────────────────────────────────────
+  mkCard({
+    id: 'lit.hammerHome',
+    name: 'Hammer It Home',
+    character: 'litigator',
+    category: 'Rhetoric',
+    rarity: 'common',
+    mult: 2,
+    text: 'Score +2 mult.',
+    upgrade: { name: 'Hammer It Home+', mult: 3, text: 'Score +3 mult.' },
+    flavor: 'Again. And again. Until it sticks.',
+  }),
+  mkCard({
+    id: 'lit.risingVoice',
+    name: 'Rising Voice',
+    character: 'litigator',
+    category: 'Statement',
+    rarity: 'common',
+    base: 4,
+    mult: 1,
+    text: 'Score 4 base and +1 mult.',
+    upgrade: {
+      name: 'Rising Voice+',
+      base: 6,
+      mult: 2,
+      text: 'Score 6 base and +2 mult.',
+    },
+    flavor: 'You can hear it building.',
+  }),
+  mkCard({
+    id: 'lit.pointByPoint',
+    name: 'Point by Point',
+    character: 'litigator',
+    category: 'Rhetoric',
+    rarity: 'common',
+    onScore: [{ op: 'addMultPer', per: 1, source: { kind: 'argumentSize' } }],
+    text: 'Score +1 mult per card in this argument.',
+    upgrade: {
+      name: 'Point by Point+',
+      mult: 1,
+      onScore: [{ op: 'addMultPer', per: 1, source: { kind: 'argumentSize' } }],
+      text: 'Score +1 mult, plus 1 mult per card in this argument.',
+    },
+    flavor: 'One. Two. Three. Inescapable.',
+  }),
+
+  // ── Sustained generators ─────────────────────────────────────
+  mkCard({
+    id: 'lit.holdTheFloor',
+    name: 'Hold the Floor',
+    character: 'litigator',
+    kind: 'action',
+    category: 'Tactic',
+    rarity: 'common',
+    onPlay: [{ op: 'applyStatus', target: 'self', status: KW.Sustained, amount: 2 }],
+    text: 'Gain 2 Sustained. (Each Sustained adds +1 mult at the start of your next argument, then is consumed.)',
+    upgrade: {
+      name: 'Hold the Floor+',
+      onPlay: [{ op: 'applyStatus', target: 'self', status: KW.Sustained, amount: 3 }],
+      text: 'Gain 3 Sustained. (Each Sustained adds +1 mult at the start of your next argument, then is consumed.)',
+    },
+    flavor: 'Your Honor, if I may continue.',
+  }),
+  mkCard({
+    id: 'lit.sustainedAssault',
+    name: 'Sustained Assault',
+    character: 'litigator',
+    category: 'Statement',
+    rarity: 'common',
+    base: 5,
+    onScore: [{ op: 'applyStatus', target: 'self', status: KW.Sustained, amount: 2 }],
+    text: 'Score 5 base. Gain 2 Sustained.',
+    upgrade: {
+      name: 'Sustained Assault+',
+      base: 7,
+      onScore: [{ op: 'applyStatus', target: 'self', status: KW.Sustained, amount: 2 }],
+      text: 'Score 7 base. Gain 2 Sustained.',
+    },
+    flavor: 'No pauses. No openings. No mercy.',
+  }),
+  mkCard({
+    id: 'lit.momentum',
+    name: 'Momentum',
+    character: 'litigator',
+    category: 'Rhetoric',
+    rarity: 'uncommon',
+    mult: 1,
+    onScore: [
+      { op: 'applyStatus', target: 'self', status: KW.Sustained, amount: 1 },
+      { op: 'addMultPer', per: 1, source: { kind: 'statusStacks', target: 'self', status: KW.Sustained } },
+    ],
+    text: 'Score +1 mult, plus 1 mult per Sustained you hold. Gain 1 Sustained.',
+    upgrade: {
+      name: 'Momentum+',
+      mult: 2,
+      onScore: [
+        { op: 'applyStatus', target: 'self', status: KW.Sustained, amount: 2 },
+        { op: 'addMultPer', per: 1, source: { kind: 'statusStacks', target: 'self', status: KW.Sustained } },
+      ],
+      text: 'Score +2 mult, plus 1 mult per Sustained you hold. Gain 2 Sustained.',
+    },
+    flavor: 'The wave only grows.',
+  }),
+
+  // ── Scaling on Sustained stacks ──────────────────────────────
+  mkCard({
+    id: 'lit.fullVolume',
+    name: 'Full Volume',
+    character: 'litigator',
+    category: 'Statement',
+    rarity: 'uncommon',
+    focusCost: 2,
+    base: 6,
+    onScore: [{ op: 'addBasePer', per: 4, source: { kind: 'statusStacks', target: 'self', status: KW.Sustained } }],
+    text: 'Score 6 base, plus 4 base per Sustained you hold.',
+    upgrade: {
+      name: 'Full Volume+',
+      base: 8,
+      onScore: [{ op: 'addBasePer', per: 5, source: { kind: 'statusStacks', target: 'self', status: KW.Sustained } }],
+      text: 'Score 8 base, plus 5 base per Sustained you hold.',
+    },
+    flavor: 'They can hear you in the hallway.',
+  }),
+  mkCard({
+    id: 'lit.overwhelm',
+    name: 'Overwhelm',
+    character: 'litigator',
+    category: 'Rhetoric',
+    rarity: 'uncommon',
+    onScore: [{ op: 'addMultPer', per: 2, source: { kind: 'statusStacks', target: 'self', status: KW.Sustained } }],
+    text: 'Score +2 mult per Sustained you hold.',
+    upgrade: {
+      name: 'Overwhelm+',
+      onScore: [{ op: 'addMultPer', per: 3, source: { kind: 'statusStacks', target: 'self', status: KW.Sustained } }],
+      text: 'Score +3 mult per Sustained you hold.',
+    },
+    flavor: 'Bury them under the weight of it.',
+  }),
+
+  // ── mulMult cards ────────────────────────────────────────────
+  mkCard({
+    id: 'lit.forTheRecord',
+    name: 'For the Record',
+    character: 'litigator',
+    category: 'Statement',
+    rarity: 'uncommon',
+    base: 6,
+    mult: 1,
+    onScore: [
+      {
+        op: 'conditional',
+        condition: { kind: 'hasStatus', target: 'self', status: KW.Sustained, atLeast: 3 },
+        then: [{ op: 'mulMult', factor: 2 }],
+      },
+    ],
+    text: 'Score 6 base and +1 mult. If you hold at least 3 Sustained, double your current mult.',
+    upgrade: {
+      name: 'For the Record+',
+      base: 8,
+      mult: 1,
+      onScore: [
+        {
+          op: 'conditional',
+          condition: { kind: 'hasStatus', target: 'self', status: KW.Sustained, atLeast: 2 },
+          then: [{ op: 'mulMult', factor: 2 }],
+        },
+      ],
+      text: 'Score 8 base and +1 mult. If you hold at least 2 Sustained, double your current mult.',
+    },
+    flavor: 'Let me be perfectly clear.',
+  }),
+
+  // ── Rares ────────────────────────────────────────────────────
+  mkCard({
+    id: 'lit.closingBarrage',
+    name: 'Closing Barrage',
+    character: 'litigator',
+    category: 'Closing',
+    rarity: 'rare',
+    focusCost: 2,
+    base: 6,
+    onScore: [
+      { op: 'addMultPer', per: 1, source: { kind: 'cardsPlayedThisRound' } },
+      { op: 'addMultPer', per: 1, source: { kind: 'statusStacks', target: 'self', status: KW.Sustained } },
+    ],
+    text: 'Score 6 base, plus 1 mult per card already played this round and +1 mult per Sustained you hold.',
+    upgrade: {
+      name: 'Closing Barrage+',
+      base: 8,
+      onScore: [
+        { op: 'addMultPer', per: 1, source: { kind: 'cardsPlayedThisRound' } },
+        { op: 'addMultPer', per: 2, source: { kind: 'statusStacks', target: 'self', status: KW.Sustained } },
+      ],
+      text: 'Score 8 base, plus 1 mult per card already played this round and +2 mult per Sustained you hold.',
+    },
+    flavor: 'Everything, all at once.',
+  }),
+  mkCard({
+    id: 'lit.verdict',
+    name: 'Demand a Verdict',
+    character: 'litigator',
+    category: 'Closing',
+    rarity: 'rare',
+    focusCost: 3,
+    base: 10,
+    mult: 2,
+    onScore: [{ op: 'mulMult', factor: 2 }],
+    keywords: [KW.Stricken],
+    exhausts: true,
+    text: 'Score 10 base and +2 mult, then double your current mult. Stricken.',
+    upgrade: {
+      name: 'Demand a Verdict+',
+      focusCost: 2,
+      base: 12,
+      mult: 2,
+      text: 'Score 12 base and +2 mult, then double your current mult. Costs 1 less Focus. Stricken.',
+    },
+    flavor: 'The defense rests. Now decide.',
+  }),
+  mkCard({
+    id: 'lit.crushingRebuttal',
+    name: 'Crushing Rebuttal',
+    character: 'litigator',
+    kind: 'action',
+    category: 'Tactic',
+    rarity: 'rare',
+    onPlay: [
+      { op: 'applyStatus', target: 'self', status: KW.Sustained, amount: 3 },
+      { op: 'reduceConviction', amount: 5 },
+      { op: 'drawCards', amount: 1 },
+    ],
+    text: 'Gain 3 Sustained. Reduce Conviction by 5. Draw 1 card.',
+    upgrade: {
+      name: 'Crushing Rebuttal+',
+      onPlay: [
+        { op: 'applyStatus', target: 'self', status: KW.Sustained, amount: 4 },
+        { op: 'reduceConviction', amount: 7 },
+        { op: 'drawCards', amount: 1 },
+      ],
+      text: 'Gain 4 Sustained. Reduce Conviction by 7. Draw 1 card.',
+    },
+    flavor: 'That argument? Gone. Reduced to rubble.',
+  }),
+];

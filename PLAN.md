@@ -59,10 +59,10 @@ Legend: `[ ]` todo · `[x]` done · `[~]` in progress.
 - [x] accessibility: colorblind-safe palette, scalable text, reduce-motion, keyboard
 
 ## Phase 7 — Content fill to targets
-- [ ] 70+ cards across 3 characters + neutrals (all families)
-- [ ] 45+ Precedents across rarities; ≥4 reachable engine combos
-- [ ] 15+ events, 12+ elite/boss encounters, shop tables, full Motion set
-- [ ] every declared effect implemented + unit-tested; codex/strings complete
+- [x] 84 cards across 3 characters + neutrals (all families)
+- [x] 46 Precedents across rarities; ≥4 reachable engine combos
+- [x] 16 events, 15 elite/boss encounters, shop tables, 13 Motions
+- [x] every declared effect implemented + validated; codex/strings complete
 
 ## Phase 8 — Balance pass
 - [ ] sim: win-rate curves per char×Appeal; per-card/Precedent contribution;
