@@ -12,6 +12,7 @@ import type { EncounterState } from '../../engine';
 import { useGame } from '../store/gameStore';
 import { CardView } from '../components/CardView';
 import { Meter, StatusList, IntentBadge } from '../components/widgets';
+import { TutorialOverlay } from '../components/TutorialOverlay';
 
 function previewArgument(enc: EncounterState): { base: number; mult: number; doubt: number } {
   if (enc.player.argument.length === 0) return { base: 0, mult: 1, doubt: 0 };
@@ -21,28 +22,62 @@ function previewArgument(enc: EncounterState): { base: number; mult: number; dou
   return { base: res.base, mult: res.mult, doubt: res.doubt };
 }
 
-function ScoreFlash({ enc }: { enc: EncounterState }) {
-  const [show, setShow] = useState(false);
+function ScoreFlash({ enc, reduceMotion }: { enc: EncounterState; reduceMotion: boolean }) {
+  const result = enc.lastScoring;
   const last = useRef<unknown>(null);
+  const [active, setActive] = useState<typeof result>(null);
+  const [idx, setIdx] = useState(0);
+
   useEffect(() => {
-    if (enc.lastScoring && enc.lastScoring !== last.current) {
-      last.current = enc.lastScoring;
-      setShow(true);
-      const t = setTimeout(() => setShow(false), 1300);
-      return () => clearTimeout(t);
+    if (result && result !== last.current) {
+      last.current = result;
+      setActive(result);
+      if (reduceMotion) {
+        setIdx(result.steps.length);
+        const t = setTimeout(() => setActive(null), 900);
+        return () => clearTimeout(t);
+      }
+      setIdx(0);
+      let i = 0;
+      const step = setInterval(() => {
+        i += 1;
+        setIdx(i);
+        if (i >= result.steps.length) clearInterval(step);
+      }, 200);
+      const done = setTimeout(() => setActive(null), 200 * result.steps.length + 1200);
+      return () => {
+        clearInterval(step);
+        clearTimeout(done);
+      };
     }
     return undefined;
-  }, [enc.lastScoring]);
-  if (!show || !enc.lastScoring) return null;
-  const s = enc.lastScoring;
+  }, [result, reduceMotion]);
+
+  if (!active) return null;
+  const visible = active.steps.slice(0, Math.max(1, idx));
+  const finished = idx >= active.steps.length;
+
   return (
     <div className="cascade">
-      <div className="cascade-inner pop">
+      <div className="cascade-inner">
+        {visible
+          .filter((s) => s.kind !== 'final')
+          .map((s, i) => (
+            <div className="cascade-step pop" key={i}>
+              <span className="muted">{s.label}</span>{' '}
+              {s.baseDelta !== 0 && <span className="cascade-base">+{Math.round(s.baseDelta)} base</span>}{' '}
+              {s.multDelta !== 0 && (
+                <span className="cascade-mult">
+                  {s.multFactor ? `×${s.multFactor}` : `+${s.multDelta.toFixed(1)}`} mult
+                </span>
+              )}
+            </div>
+          ))}
         <div className="cascade-step">
-          <span className="cascade-base">{Math.round(s.base)} base</span> ×{' '}
-          <span className="cascade-mult">{s.mult.toFixed(1)} mult</span>
+          <span className="cascade-base">{Math.round(active.base)} base</span> ×{' '}
+          <span className="cascade-mult">{active.mult.toFixed(1)} mult</span>
         </div>
-        <div className="cascade-total pop">+{s.doubt} Doubt</div>
+        {finished && <div className="cascade-total pop">+{active.doubt} Doubt</div>}
       </div>
     </div>
   );
@@ -57,14 +92,29 @@ export function TrialScreen() {
   const discard = useGame((s) => s.discard);
   const endTurn = useGame((s) => s.endTurn);
   const playCombatMotion = useGame((s) => s.playCombatMotion);
+  const settings = useGame((s) => s.meta.settings);
 
   const [discardMode, setDiscardMode] = useState(false);
   const [selected, setSelected] = useState<string[]>([]);
+  const [shake, setShake] = useState(false);
+  const shakeRef = useRef<unknown>(null);
 
   useEffect(() => {
     setDiscardMode(false);
     setSelected([]);
   }, [enc.round]);
+
+  useEffect(() => {
+    if (enc.lastScoring && enc.lastScoring !== shakeRef.current) {
+      shakeRef.current = enc.lastScoring;
+      if (settings.screenShake && !settings.reduceMotion) {
+        setShake(true);
+        const t = setTimeout(() => setShake(false), 320);
+        return () => clearTimeout(t);
+      }
+    }
+    return undefined;
+  }, [enc.lastScoring, settings.screenShake, settings.reduceMotion]);
 
   const enemy = DB.getEnemy(enc.enemyId);
   const preview = previewArgument(enc);
@@ -90,8 +140,9 @@ export function TrialScreen() {
   };
 
   return (
-    <div className="trial" style={{ height: '100%' }}>
-      <ScoreFlash enc={enc} />
+    <div className={`trial ${shake ? 'shake' : ''}`} style={{ height: '100%' }}>
+      <TutorialOverlay />
+      <ScoreFlash enc={enc} reduceMotion={settings.reduceMotion} />
 
       {/* Prosecution */}
       <div className="bench">

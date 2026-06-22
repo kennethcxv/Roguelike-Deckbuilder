@@ -33,6 +33,7 @@ import {
   playMapMotion,
 } from '../../engine';
 import type { RunMode, RunState } from '../../engine';
+import { playSfx } from '../../audio';
 import {
   loadMeta,
   saveMeta,
@@ -121,6 +122,7 @@ export const useGame = create<GameStore>((set, get) => {
       saveMeta(meta);
       set({ run: next, meta });
       clearRun();
+      playSfx(next.result === 'win' ? 'win' : 'lose');
     } else {
       set({ run: next });
       persist(next);
@@ -157,33 +159,84 @@ export const useGame = create<GameStore>((set, get) => {
     },
     returnToTitle: () => set({ appScreen: 'title', overlay: null }),
 
-    toggleArgument: (uid) => act((r) => void runToggleArgument(r, DB, uid)),
-    playAction: (uid) => act((r) => void runPlayAction(r, DB, uid)),
-    present: () => act((r) => void runPresent(r, DB)),
-    discard: (uids) => act((r) => void runDiscard(r, DB, uids)),
-    endTurn: () => act((r) => runEndTurn(r, DB)),
-    playCombatMotion: (id) => act((r) => void runPlayCombatMotion(r, DB, id)),
+    toggleArgument: (uid) => {
+      playSfx('click');
+      act((r) => void runToggleArgument(r, DB, uid));
+    },
+    playAction: (uid) => {
+      playSfx('card');
+      act((r) => void runPlayAction(r, DB, uid));
+    },
+    present: () => {
+      act((r) => void runPresent(r, DB));
+      playSfx('score');
+    },
+    discard: (uids) => {
+      playSfx('shuffle');
+      act((r) => void runDiscard(r, DB, uids));
+    },
+    endTurn: () => {
+      playSfx('gavel');
+      act((r) => runEndTurn(r, DB));
+    },
+    playCombatMotion: (id) => {
+      playSfx('present');
+      act((r) => void runPlayCombatMotion(r, DB, id));
+    },
 
-    takeCard: (i) => act((r) => void takeCardReward(r, i)),
+    takeCard: (i) => {
+      playSfx('card');
+      act((r) => void takeCardReward(r, i));
+    },
     skipCard: () => act((r) => skipCardReward(r)),
-    takePrecedent: () => act((r) => void takePrecedentReward(r)),
-    takeMotion: () => act((r) => void takeMotionReward(r)),
+    takePrecedent: () => {
+      playSfx('coin');
+      act((r) => void takePrecedentReward(r));
+    },
+    takeMotion: () => {
+      playSfx('coin');
+      act((r) => void takeMotionReward(r));
+    },
     finishRewards: () => act((r) => finishRewards(r)),
 
-    chooseEvent: (i) => act((r) => void chooseEventOption(r, DB, i)),
+    chooseEvent: (i) => {
+      playSfx('click');
+      act((r) => void chooseEventOption(r, DB, i));
+    },
     finishEvent: () => act((r) => finishEvent(r)),
 
-    buyCard: (i) => act((r) => void shopBuyCard(r, i)),
-    buyPrecedent: (i) => act((r) => void shopBuyPrecedent(r, i)),
-    buyMotion: (i) => act((r) => void shopBuyMotion(r, i)),
-    sellCard: (uid) => act((r) => void shopSellCard(r, DB, uid)),
-    removeCard: (uid) => act((r) => void shopRemoveCard(r, uid)),
+    buyCard: (i) => {
+      playSfx('coin');
+      act((r) => void shopBuyCard(r, i));
+    },
+    buyPrecedent: (i) => {
+      playSfx('coin');
+      act((r) => void shopBuyPrecedent(r, i));
+    },
+    buyMotion: (i) => {
+      playSfx('coin');
+      act((r) => void shopBuyMotion(r, i));
+    },
+    sellCard: (uid) => {
+      playSfx('coin');
+      act((r) => void shopSellCard(r, DB, uid));
+    },
+    removeCard: (uid) => {
+      playSfx('coin');
+      act((r) => void shopRemoveCard(r, uid));
+    },
     leaveShop: () => act((r) => leaveShop(r)),
 
     restRecuperate: () => act((r) => restRecuperate(r)),
-    restStudy: (uid) => act((r) => void restStudy(r, DB, uid)),
+    restStudy: (uid) => {
+      playSfx('card');
+      act((r) => void restStudy(r, DB, uid));
+    },
 
-    enterNode: (id) => act((r) => void engEnterNode(r, DB, id)),
+    enterNode: (id) => {
+      playSfx('click');
+      act((r) => void engEnterNode(r, DB, id));
+    },
     playMapMotion: (id) => act((r) => void playMapMotion(r, DB, id)),
 
     updateMeta: (fn) => {

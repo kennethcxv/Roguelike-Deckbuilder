@@ -52,11 +52,11 @@ Legend: `[ ]` todo · `[x]` done · `[~]` in progress.
 - [x] modes: Standard, Daily (date-seed), Custom Seed
 
 ## Phase 6 — Audio, art, juice, tutorial, codex, a11y
-- [ ] `audio/` WebAudio SFX + adaptive per-act music + volumes
-- [ ] cohesive CSS/SVG art direction; card frames per type/rarity
-- [ ] juice: cascade, number pops, particles, shake, transitions (reduce-motion gated)
-- [ ] first-run tutorial trial; keyword/Precedent tooltips; Codex
-- [ ] accessibility: colorblind-safe palette, scalable text, reduce-motion, keyboard
+- [x] `audio/` WebAudio SFX + adaptive per-act music + volumes
+- [x] cohesive CSS/SVG art direction; card frames per type/rarity
+- [x] juice: cascade, number pops, particles, shake, transitions (reduce-motion gated)
+- [x] first-run tutorial trial; keyword tooltips; Codex
+- [x] accessibility: colorblind-safe palette, scalable text, reduce-motion, keyboard
 
 ## Phase 7 — Content fill to targets
 - [ ] 70+ cards across 3 characters + neutrals (all families)
