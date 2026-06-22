@@ -25,6 +25,7 @@ export type EventId = string;
 export type MotionId = string;
 export type CharacterId = string;
 export type AchievementId = string;
+export type NodeId = string;
 
 export type Rarity = 'starter' | 'common' | 'uncommon' | 'rare' | 'special' | 'boss';
 
@@ -449,7 +450,180 @@ export interface ScoringState {
   scoredUids: string[];
 }
 
-// ─────────────── 7. EffectContext & ContentLookup ───────────────
+// ───────────── 6b. Map, run, events, motions, shop ─────────────
+
+export type NodeType = 'trial' | 'elite' | 'event' | 'shop' | 'rest' | 'boss';
+
+export interface MapNode {
+  id: NodeId;
+  act: number;
+  row: number;
+  col: number;
+  type: NodeType;
+  next: NodeId[];
+  enemyId?: EnemyId;
+  visited?: boolean;
+}
+
+export interface ActMap {
+  act: number;
+  rows: number;
+  nodes: MapNode[];
+  startNodeIds: NodeId[];
+  bossNodeId: NodeId;
+}
+
+export interface GameMap {
+  acts: ActMap[];
+}
+
+export type EventOutcome =
+  | { kind: 'gainRetainer'; amount: number }
+  | { kind: 'loseRetainer'; amount: number }
+  | { kind: 'healComposure'; amount: number }
+  | { kind: 'loseComposure'; amount: number }
+  | { kind: 'gainMaxComposure'; amount: number }
+  | { kind: 'loseMaxComposure'; amount: number }
+  | { kind: 'addCard'; cardId: CardId; upgraded?: boolean }
+  | { kind: 'addRandomCard'; rarity?: Rarity }
+  | { kind: 'removeRandomCard' }
+  | { kind: 'upgradeRandomCard' }
+  | { kind: 'transformRandomCard' }
+  | { kind: 'addPrecedent'; precedentId?: PrecedentId }
+  | { kind: 'addMotion'; motionId?: MotionId }
+  | { kind: 'nothing' };
+
+export interface EventRequirement {
+  minRetainer?: number;
+  minComposure?: number;
+  character?: CharacterId;
+}
+
+export interface EventOption {
+  label: string;
+  description: string;
+  resultText: string;
+  outcomes: EventOutcome[];
+  requirement?: EventRequirement;
+}
+
+export interface EventDef {
+  id: EventId;
+  name: string;
+  act?: number;
+  text: string;
+  options: EventOption[];
+  flavor?: string;
+}
+
+export interface MotionDef {
+  id: MotionId;
+  name: string;
+  rarity: Rarity;
+  text: string;
+  /** Where the motion can be used. */
+  usage: 'combat' | 'map';
+  combatEffects?: Effect[];
+  mapOutcomes?: EventOutcome[];
+  cost: number;
+  flavor?: string;
+}
+
+export type RunScreen =
+  | 'map'
+  | 'trial'
+  | 'reward'
+  | 'shop'
+  | 'event'
+  | 'rest'
+  | 'runWon'
+  | 'runLost';
+
+export type RunMode = 'standard' | 'daily' | 'custom';
+
+export interface CardReward {
+  cardId: CardId;
+  upgraded: boolean;
+}
+
+export interface PendingRewards {
+  retainer: number;
+  cardChoices: CardReward[];
+  precedentId: PrecedentId | null;
+  motionId: MotionId | null;
+  cardTaken: boolean;
+  precedentTaken: boolean;
+  motionTaken: boolean;
+}
+
+export interface ShopCardEntry {
+  cardId: CardId;
+  cost: number;
+  sold: boolean;
+}
+export interface ShopPrecedentEntry {
+  precedentId: PrecedentId;
+  cost: number;
+  sold: boolean;
+}
+export interface ShopMotionEntry {
+  motionId: MotionId;
+  cost: number;
+  sold: boolean;
+}
+export interface ShopState {
+  cards: ShopCardEntry[];
+  precedents: ShopPrecedentEntry[];
+  motions: ShopMotionEntry[];
+  removeCost: number;
+  removeUsed: boolean;
+}
+
+export interface EventInstance {
+  eventId: EventId;
+  resolvedOptionIndex: number | null;
+  resultText: string | null;
+}
+
+export interface RunStats {
+  trialsWon: number;
+  elitesWon: number;
+  bossesWon: number;
+  cardsAdded: number;
+  cardsRemoved: number;
+  precedentsGained: number;
+  biggestArgument: number;
+  retainerEarned: number;
+  roundsPlayed: number;
+}
+
+export interface RunState {
+  seed: number;
+  seedLabel: string;
+  mode: RunMode;
+  characterId: CharacterId;
+  appeal: number;
+  act: number;
+  map: GameMap;
+  currentNodeId: NodeId | null;
+  reachableNodeIds: NodeId[];
+  deck: CardInstance[];
+  precedents: PrecedentId[];
+  motions: MotionId[];
+  retainer: number;
+  composure: number;
+  maxComposure: number;
+  screen: RunScreen;
+  encounter: EncounterState | null;
+  rewards: PendingRewards | null;
+  shop: ShopState | null;
+  event: EventInstance | null;
+  stats: RunStats;
+  log: string[];
+  result: 'win' | 'loss' | null;
+}
+
+// ───────────── 7. EffectContext & ContentLookup ───────────────
 
 export interface ScoreSource {
   kind: ScoreStepKind;
@@ -486,8 +660,14 @@ export interface ContentLookup {
   getEnemyOrNull(id: EnemyId): EnemyDef | undefined;
   getCharacter(id: CharacterId): CharacterDef;
   getCharacterOrNull(id: CharacterId): CharacterDef | undefined;
+  getEvent(id: EventId): EventDef;
+  getEventOrNull(id: EventId): EventDef | undefined;
+  getMotion(id: MotionId): MotionDef;
+  getMotionOrNull(id: MotionId): MotionDef | undefined;
   allCards(): CardDef[];
   allPrecedents(): PrecedentDef[];
   allEnemies(): EnemyDef[];
   allCharacters(): CharacterDef[];
+  allEvents(): EventDef[];
+  allMotions(): MotionDef[];
 }

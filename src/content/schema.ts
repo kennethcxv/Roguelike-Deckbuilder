@@ -11,7 +11,10 @@ import type {
   Condition,
   Effect,
   EnemyDef,
+  EventDef,
+  EventOutcome,
   KeywordDef,
+  MotionDef,
   PrecedentDef,
   Source,
 } from '../engine/types';
@@ -28,6 +31,8 @@ export interface ContentBundle {
   enemies: EnemyDef[];
   characters: CharacterDef[];
   keywords: KeywordDef[];
+  events?: EventDef[];
+  motions?: MotionDef[];
 }
 
 function keywordRefsInSource(src: Source, out: Set<string>): void {
@@ -183,6 +188,49 @@ export function validateContent(bundle: ContentBundle): ValidationIssue[] {
       if (!precedentIds.has(pid)) err(`character:${c.id}`, `unknown starting precedent ${pid}`);
     }
     if (c.startingComposure <= 0) err(`character:${c.id}`, 'non-positive starting composure');
+  }
+
+  // Events.
+  const motionIds = new Set((bundle.motions ?? []).map((m) => m.id));
+  const checkOutcome = (where: string, o: EventOutcome) => {
+    if (o.kind === 'addCard' && !cardIds.has(o.cardId)) {
+      err(where, `outcome references unknown card ${o.cardId}`);
+    }
+    if (o.kind === 'addPrecedent' && o.precedentId && !precedentIds.has(o.precedentId)) {
+      err(where, `outcome references unknown precedent ${o.precedentId}`);
+    }
+    if (o.kind === 'addMotion' && o.motionId && !motionIds.has(o.motionId)) {
+      err(where, `outcome references unknown motion ${o.motionId}`);
+    }
+  };
+  const seenEvent = new Set<string>();
+  for (const ev of bundle.events ?? []) {
+    if (seenEvent.has(ev.id)) err(`event:${ev.id}`, 'duplicate event id');
+    seenEvent.add(ev.id);
+    if (ev.options.length === 0) err(`event:${ev.id}`, 'event has no options');
+    for (const opt of ev.options) {
+      if (opt.outcomes.length === 0) err(`event:${ev.id}`, `option "${opt.label}" has no outcomes`);
+      for (const o of opt.outcomes) checkOutcome(`event:${ev.id}`, o);
+    }
+  }
+
+  // Motions.
+  const seenMotion = new Set<string>();
+  for (const m of bundle.motions ?? []) {
+    if (seenMotion.has(m.id)) err(`motion:${m.id}`, 'duplicate motion id');
+    seenMotion.add(m.id);
+    if (m.usage === 'combat' && (!m.combatEffects || m.combatEffects.length === 0)) {
+      err(`motion:${m.id}`, 'combat motion has no combatEffects');
+    }
+    if (m.usage === 'map' && (!m.mapOutcomes || m.mapOutcomes.length === 0)) {
+      err(`motion:${m.id}`, 'map motion has no mapOutcomes');
+    }
+    const refs = new Set<string>();
+    keywordRefsInEffects(m.combatEffects, refs);
+    for (const kw of refs) {
+      if (!keywordIds.has(kw)) err(`motion:${m.id}`, `references unknown keyword ${kw}`);
+    }
+    for (const o of m.mapOutcomes ?? []) checkOutcome(`motion:${m.id}`, o);
   }
 
   // Every engine keyword must have display data.

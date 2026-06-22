@@ -1,6 +1,15 @@
 import { describe, it, expect } from 'vitest';
 import { validateContent } from './schema';
-import { ALL_CARDS, ALL_PRECEDENTS, ALL_ENEMIES, ALL_CHARACTERS, KEYWORDS, DB } from './index';
+import {
+  ALL_CARDS,
+  ALL_PRECEDENTS,
+  ALL_ENEMIES,
+  ALL_CHARACTERS,
+  ALL_EVENTS,
+  ALL_MOTIONS,
+  KEYWORDS,
+  DB,
+} from './index';
 
 const bundle = {
   cards: ALL_CARDS,
@@ -8,6 +17,8 @@ const bundle = {
   enemies: ALL_ENEMIES,
   characters: ALL_CHARACTERS,
   keywords: KEYWORDS,
+  events: ALL_EVENTS,
+  motions: ALL_MOTIONS,
 };
 
 describe('content validation', () => {

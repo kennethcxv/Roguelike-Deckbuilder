@@ -13,7 +13,9 @@ import type {
   ContentLookup,
   EncounterState,
   EnemyDef,
+  EventDef,
   KeywordDef,
+  MotionDef,
   PlayerCombat,
   PrecedentDef,
   ProsecutionState,
@@ -74,12 +76,16 @@ export function makeContent(
   tuning: Tuning = DEFAULT_TUNING,
   enemies: EnemyDef[] = [],
   characters: CharacterDef[] = [],
+  events: EventDef[] = [],
+  motions: MotionDef[] = [],
 ): ContentLookup {
   const cardMap = new Map(cards.map((c) => [c.id, c]));
   const precMap = new Map(precedents.map((p) => [p.id, p]));
   const kwMap = new Map(keywords.map((k) => [k.id, k]));
   const enemyMap = new Map(enemies.map((e) => [e.id, e]));
   const charMap = new Map(characters.map((c) => [c.id, c]));
+  const eventMap = new Map(events.map((e) => [e.id, e]));
+  const motionMap = new Map(motions.map((m) => [m.id, m]));
   return {
     tuning,
     getCard(id) {
@@ -112,10 +118,24 @@ export function makeContent(
       return c;
     },
     getCharacterOrNull: (id) => charMap.get(id),
+    getEvent(id) {
+      const e = eventMap.get(id);
+      if (!e) throw new Error(`Unknown event: ${id}`);
+      return e;
+    },
+    getEventOrNull: (id) => eventMap.get(id),
+    getMotion(id) {
+      const m = motionMap.get(id);
+      if (!m) throw new Error(`Unknown motion: ${id}`);
+      return m;
+    },
+    getMotionOrNull: (id) => motionMap.get(id),
     allCards: () => [...cardMap.values()],
     allPrecedents: () => [...precMap.values()],
     allEnemies: () => [...enemyMap.values()],
     allCharacters: () => [...charMap.values()],
+    allEvents: () => [...eventMap.values()],
+    allMotions: () => [...motionMap.values()],
   };
 }
 

@@ -35,10 +35,10 @@ Legend: `[ ]` todo · `[x]` done · `[~]` in progress.
 ## Phase 3 — Encounter / run / map / economy + AI
 - [x] `engine/encounter.ts` round loop, Doubt/Conviction/target, win/lose, statuses, Witness
 - [x] `engine/ai.ts` prosecution Intent telegraph→execute, scaling, boss mutators
-- [ ] `engine/map.ts` seeded 3-act branching DAG
-- [ ] `engine/run.ts` run lifecycle, deck mgmt, Composure, Retainer, relics
-- [ ] `engine/rewards.ts` + `engine/shop.ts`
-- [ ] integration tests: scripted encounter + full seeded run to a boss
+- [x] `engine/map.ts` seeded 3-act branching DAG
+- [x] `engine/run.ts` run lifecycle, deck mgmt, Composure, Retainer, relics
+- [x] `engine/rewards.ts` + `engine/shop.ts`
+- [x] integration tests: scripted encounter + full seeded run to a boss
 
 ## Phase 4 — Full UI
 - [ ] Zustand store bridging engine; screen routing

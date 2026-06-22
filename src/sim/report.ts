@@ -1,6 +1,7 @@
 import { DB } from '../content';
 import { GreedyStrategy } from './strategy';
 import { simulateTrial } from './runTrial';
+import { simulateRun } from './autoRun';
 import { deckFromStarting, pct } from './util';
 import type { EnemyDef } from '../engine';
 
@@ -69,6 +70,72 @@ export function computeTrialReport(opts: ReportOptions): TrialReport {
     out.push({ characterId: ch.id, title: ch.title, results, act1WinRate });
   }
   return { characters: out };
+}
+
+// ───────────────────────── Full-run report ─────────────────────────
+
+export interface RunCell {
+  appeal: number;
+  winRate: number;
+  avgAct: number;
+  avgBigArg: number;
+}
+export interface RunCharacterReport {
+  characterId: string;
+  title: string;
+  cells: RunCell[];
+}
+export interface RunReport {
+  characters: RunCharacterReport[];
+  appeals: number[];
+}
+
+export function computeRunReport(opts: { runs: number; seed: number; appeals: number[] }): RunReport {
+  const characters = DB.allCharacters();
+  const out: RunCharacterReport[] = [];
+  for (const ch of characters) {
+    const cells: RunCell[] = [];
+    for (const appeal of opts.appeals) {
+      let wins = 0;
+      let actSum = 0;
+      let bigSum = 0;
+      for (let i = 0; i < opts.runs; i++) {
+        const r = simulateRun({
+          content: DB,
+          characterId: ch.id,
+          appeal,
+          seedLabel: `sim-${opts.seed}-${ch.id}-${appeal}-${i}`,
+        });
+        if (r.win) wins += 1;
+        actSum += r.actReached;
+        bigSum += r.biggestArgument;
+      }
+      cells.push({
+        appeal,
+        winRate: wins / opts.runs,
+        avgAct: actSum / opts.runs,
+        avgBigArg: bigSum / opts.runs,
+      });
+    }
+    out.push({ characterId: ch.id, title: ch.title, cells });
+  }
+  return { characters: out, appeals: opts.appeals };
+}
+
+export function printRunReport(report: RunReport, runs: number): void {
+  console.log(`\nReasonable Doubt — Full-Run Win Rates  (${runs} runs/cell)\n`);
+  const header = ['Character'.padEnd(16), ...report.appeals.map((a) => `A${a}`.padStart(7))].join('');
+  console.log(header);
+  console.log('-'.repeat(header.length));
+  for (const ch of report.characters) {
+    const row = [ch.title.padEnd(16), ...ch.cells.map((c) => pct(c.winRate).padStart(7))].join('');
+    console.log(row);
+  }
+  console.log('\nAvg act reached:');
+  for (const ch of report.characters) {
+    const row = [ch.title.padEnd(16), ...ch.cells.map((c) => c.avgAct.toFixed(1).padStart(7))].join('');
+    console.log(row);
+  }
 }
 
 export function printTrialReport(report: TrialReport, opts: ReportOptions): void {

@@ -35,3 +35,49 @@ export {
   currentIntent,
 } from './encounter';
 export type { CreateEncounterOpts } from './encounter';
+export { generateMap, getNode, actMap } from './map';
+export {
+  rewardableCards,
+  rewardablePrecedents,
+  rollCardRewards,
+  rollPrecedent,
+  buildTrialRewards,
+} from './rewards';
+export { generateShop, cardPrice, precedentPrice } from './shop';
+export {
+  createRun,
+  enterNode,
+  targetMulForAppeal,
+  runToggleArgument,
+  runPlayAction,
+  runPresent,
+  runDiscard,
+  runEndTurn,
+  runUseCombatMotion,
+  syncCombat,
+  takeCardReward,
+  skipCardReward,
+  takePrecedentReward,
+  takeMotionReward,
+  finishRewards,
+  chooseEventOption,
+  eventOptionAvailable,
+  finishEvent,
+  shopBuyCard,
+  shopBuyPrecedent,
+  shopBuyMotion,
+  shopSellCard,
+  shopRemoveCard,
+  leaveShop,
+  restRecuperate,
+  restStudy,
+  canUpgrade,
+  addCardToDeck,
+  removeCardFromDeck,
+  upgradeCard,
+  addPrecedent,
+  useMapMotion,
+  applyOutcome,
+  deckView,
+} from './run';
+export type { CreateRunOpts } from './run';

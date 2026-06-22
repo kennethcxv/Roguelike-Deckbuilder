@@ -2,6 +2,17 @@
 
 Iteration log. Newest at top.
 
+## Iteration 4 — Phase 3 (run/map/economy)
+- Seeded StS-style branching map generator (3 acts, merging paths, typed nodes, bosses).
+- Full run state machine (`engine/run.ts`): map navigation → trials/events/shops/rest →
+  rewards (1-of-3 draft + Precedent + Motion) → next act → win/lose. Deck add/remove/
+  upgrade/transform, Retainer economy, Composure as run-persistent HP, consumable Motions
+  (combat + map), 6 branching events, shop with buy/sell/remove.
+- `engine/rewards.ts` + `engine/shop.ts` (seeded generation + pricing).
+- Full-run auto-player (`sim/autoRun.ts`) + win-rate-by-Appeal report. Baseline curve:
+  Litigator 53%→3% across Appeals 0–20. 63 tests green incl. map/run determinism +
+  full-run integration.
+
 ## Iteration 3 — Phase 2 (content + sim) and the encounter engine
 - Locked the combat model: win at `doubt >= doubtTarget`; lose when prosecution
   `conviction >= composure` or rounds run out. Composure is your breaking point.

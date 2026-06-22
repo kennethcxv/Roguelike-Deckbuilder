@@ -9,7 +9,9 @@ import type {
   ContentLookup,
   EncounterKind,
   EnemyDef,
+  EventDef,
   KeywordDef,
+  MotionDef,
   PrecedentDef,
   Rarity,
 } from '../engine/types';
@@ -17,6 +19,8 @@ import { ALL_CARDS } from './cards';
 import { ALL_PRECEDENTS } from './precedents';
 import { ALL_ENEMIES } from './encounters';
 import { ALL_CHARACTERS } from './characters';
+import { ALL_EVENTS } from './events';
+import { ALL_MOTIONS } from './motions';
 import { KEYWORDS } from './keywords';
 import { TUNING } from './tuning';
 import { STRINGS } from './strings';
@@ -31,6 +35,9 @@ export interface ContentDB extends ContentLookup {
   rewardablePrecedents(): PrecedentDef[];
   enemiesBy(act: number, kind: EncounterKind): EnemyDef[];
   boss(act: number): EnemyDef | undefined;
+  eventsForAct(act: number): EventDef[];
+  motionsByUsage(usage: MotionDef['usage']): MotionDef[];
+  rewardableMotions(): MotionDef[];
 }
 
 function index<T extends { id: string }>(items: T[]): Map<string, T> {
@@ -43,6 +50,8 @@ function build(): ContentDB {
   const enemyMap = index(ALL_ENEMIES);
   const charMap = index(ALL_CHARACTERS);
   const kwMap = index(KEYWORDS);
+  const eventMap = index(ALL_EVENTS);
+  const motionMap = index(ALL_MOTIONS);
 
   const need = <T>(v: T | undefined, what: string, id: string): T => {
     if (v === undefined) throw new Error(`Unknown ${what}: ${id}`);
@@ -61,10 +70,16 @@ function build(): ContentDB {
     getEnemyOrNull: (id) => enemyMap.get(id),
     getCharacter: (id) => need(charMap.get(id), 'character', id),
     getCharacterOrNull: (id) => charMap.get(id),
+    getEvent: (id) => need(eventMap.get(id), 'event', id),
+    getEventOrNull: (id) => eventMap.get(id),
+    getMotion: (id) => need(motionMap.get(id), 'motion', id),
+    getMotionOrNull: (id) => motionMap.get(id),
     allCards: () => [...cardMap.values()],
     allPrecedents: () => [...precMap.values()],
     allEnemies: () => [...enemyMap.values()],
     allCharacters: () => [...charMap.values()],
+    allEvents: () => [...eventMap.values()],
+    allMotions: () => [...motionMap.values()],
 
     cardsForCharacter: (characterId) =>
       ALL_CARDS.filter((c) => c.character === 'neutral' || c.character === characterId),
@@ -82,6 +97,9 @@ function build(): ContentDB {
       ALL_PRECEDENTS.filter((p) => p.rarity !== 'starter' && p.rarity !== 'special'),
     enemiesBy: (act, kind) => ALL_ENEMIES.filter((e) => e.act === act && e.kind === kind),
     boss: (act) => ALL_ENEMIES.find((e) => e.act === act && e.kind === 'boss'),
+    eventsForAct: (act) => ALL_EVENTS.filter((e) => e.act === undefined || e.act === act),
+    motionsByUsage: (usage) => ALL_MOTIONS.filter((m) => m.usage === usage),
+    rewardableMotions: () => ALL_MOTIONS.filter((m) => m.rarity !== 'special'),
   };
 }
 
@@ -94,7 +112,19 @@ assertValidContent({
   enemies: ALL_ENEMIES,
   characters: ALL_CHARACTERS,
   keywords: KEYWORDS,
+  events: ALL_EVENTS,
+  motions: ALL_MOTIONS,
 });
 
-export { ALL_CARDS, ALL_PRECEDENTS, ALL_ENEMIES, ALL_CHARACTERS, KEYWORDS, TUNING, STRINGS };
-export type { CardDef, PrecedentDef, EnemyDef, CharacterDef, KeywordDef };
+export {
+  ALL_CARDS,
+  ALL_PRECEDENTS,
+  ALL_ENEMIES,
+  ALL_CHARACTERS,
+  ALL_EVENTS,
+  ALL_MOTIONS,
+  KEYWORDS,
+  TUNING,
+  STRINGS,
+};
+export type { CardDef, PrecedentDef, EnemyDef, CharacterDef, KeywordDef, EventDef, MotionDef };
