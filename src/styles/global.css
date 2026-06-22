@@ -1,0 +1,27 @@
+:root {
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  margin: 0;
+  height: 100%;
+}
+
+body {
+  font-family: 'Georgia', 'Times New Roman', serif;
+  background: #1a1410;
+  color: #ece3cf;
+}
+
+.app-bootstrap {
+  display: grid;
+  place-content: center;
+  height: 100%;
+  text-align: center;
+}
