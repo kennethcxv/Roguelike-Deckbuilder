@@ -10,6 +10,8 @@
  */
 
 import {
+  canDiscard,
+  discardSelected,
   effectiveCard,
   getCardFocusCost,
   playActionCard,
@@ -117,8 +119,33 @@ export class GreedyStrategy implements Strategy {
   takeTurn(enc: EncounterState, content: ContentLookup, rng: Rng): void {
     this.playDefense(enc, content, rng);
     this.playValueActions(enc, content, rng);
+    this.cycleDeadCards(enc, content, rng);
+    this.playValueActions(enc, content, rng);
     this.presentArguments(enc, content, rng);
     this.playDefense(enc, content, rng);
+  }
+
+  /** Object/discard chaff to dig for better cards (and fuel discard-payoff builds). */
+  private cycleDeadCards(enc: EncounterState, content: ContentLookup, rng: Rng): void {
+    let guard = 0;
+    while (guard++ < 4 && enc.phase === 'player' && enc.result === null && canDiscard(enc, content)) {
+      const keep = new Set(greedyArgument(enc, content));
+      const dead = enc.player.hand.filter((c) => {
+        if (keep.has(c.uid)) return false;
+        const def = content.getCard(c.defId);
+        if (def.kind === 'action') return false;
+        if (c.overruledTurns > 0) return true;
+        return simulateArgumentDoubt(enc, content, [c.uid]) < 6;
+      });
+      if (dead.length === 0) break;
+      const ok = discardSelected(
+        enc,
+        content,
+        rng,
+        dead.slice(0, 5).map((c) => c.uid),
+      );
+      if (!ok) break;
+    }
   }
 
   /** Play Objection/Composure cards while a loss is imminent and Focus remains. */

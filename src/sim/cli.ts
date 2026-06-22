@@ -13,6 +13,7 @@ import {
   computeTrialReport,
   printTrialReport,
 } from './report';
+import { analyze, printAnalysis } from './analyze';
 
 function arg(name: string, def: string): string {
   const i = process.argv.indexOf(`--${name}`);
@@ -26,7 +27,14 @@ function flag(name: string): boolean {
 const seed = parseInt(arg('seed', '12345'), 10) || 12345;
 const start = Date.now();
 
-if (flag('trials')) {
+if (flag('analyze')) {
+  const runs = Math.max(20, parseInt(arg('runs', '300'), 10) || 300);
+  const appeals = arg('appeals', '0,2,4')
+    .split(',')
+    .map((s) => parseInt(s.trim(), 10))
+    .filter((n) => !Number.isNaN(n));
+  printAnalysis(analyze({ runs, seed, appeals }));
+} else if (flag('trials')) {
   const runs = Math.max(1, parseInt(arg('runs', '150'), 10) || 150);
   const targetMul = parseFloat(arg('targetMul', '1')) || 1;
   printTrialReport(computeTrialReport({ runs, seed, targetMul }), { runs, seed, targetMul });

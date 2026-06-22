@@ -10,8 +10,8 @@ export const FIXER_CARDS: CardDef[] = [
     character: 'fixer',
     category: 'Statement',
     rarity: 'starter',
-    base: 6,
-    text: 'Score 6 base.',
+    base: 8,
+    text: 'Score 8 base.',
     flavor: 'Filed in triplicate.',
   }),
   mkCard({
@@ -53,9 +53,12 @@ export const FIXER_CARDS: CardDef[] = [
     character: 'fixer',
     category: 'Statement',
     rarity: 'uncommon',
-    base: 4,
-    onScore: [{ op: 'addBasePer', per: 6, source: { kind: 'discardsThisRound' } }],
-    text: 'Score 4 base, plus 6 base per time you Objected this round.',
+    base: 8,
+    onScore: [
+      { op: 'addBasePer', per: 8, source: { kind: 'discardsThisRound' } },
+      { op: 'addBasePer', per: 1, source: { kind: 'evidence' } },
+    ],
+    text: 'Score 8 base, +8 base per Objection this round, and +1 base per Evidence.',
     flavor: 'You scratch my back...',
   }),
   mkCard({

@@ -10,8 +10,8 @@ export const SHOWMAN_CARDS: CardDef[] = [
     character: 'showman',
     category: 'Statement',
     rarity: 'starter',
-    base: 6,
-    text: 'Score 6 base.',
+    base: 7,
+    text: 'Score 7 base.',
     flavor: 'Pause for effect.',
   }),
   mkCard({

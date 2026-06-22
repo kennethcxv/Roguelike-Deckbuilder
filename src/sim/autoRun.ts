@@ -45,6 +45,10 @@ export interface RunSimResult {
   biggestArgument: number;
   finalDeckSize: number;
   precedents: number;
+  /** Unique card defIds present in the final deck (for contribution analysis). */
+  cardDefIds: string[];
+  /** Precedent ids owned at the end (for contribution / combo analysis). */
+  precedentIds: string[];
 }
 
 const RARITY_RANK: Record<Rarity, number> = {
@@ -220,5 +224,7 @@ export function simulateRun(opts: RunSimOptions): RunSimResult {
     biggestArgument: run.stats.biggestArgument,
     finalDeckSize: run.deck.length,
     precedents: run.precedents.length,
+    cardDefIds: [...new Set(run.deck.map((c) => c.defId))],
+    precedentIds: [...run.precedents],
   };
 }

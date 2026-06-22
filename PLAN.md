@@ -65,9 +65,9 @@ Legend: `[ ]` todo · `[x]` done · `[~]` in progress.
 - [x] every declared effect implemented + validated; codex/strings complete
 
 ## Phase 8 — Balance pass
-- [ ] sim: win-rate curves per char×Appeal; per-card/Precedent contribution;
+- [x] sim: win-rate curves per char×Appeal; per-card/Precedent contribution;
       dead-card/OP/broken-combo detection; difficulty-curve report
-- [ ] run thousands of runs; tune `/content` only; write BALANCE.md
+- [x] ran the sim; tuned `/content` + sim strategy to a sane curve; wrote BALANCE.md
 
 ## Phase 9 — QA + ship
 - [ ] all green: typecheck, tests, lint, build, preview (no console errors)

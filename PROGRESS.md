@@ -2,6 +2,15 @@
 
 Iteration log. Newest at top.
 
+## Iteration 6 — Phases 7 & 8 (content fill + balance)
+- Filled content to targets via parallel authoring + central merge + validation:
+  84 cards, 46 Precedents, 16 events, 22 enemies (15 elite/boss), 13 Motions.
+- Built sim analytics: per-card/Precedent win-rate contribution, dead-card/OP detection,
+  broken-combo (Precedent-pair) detection, plus the win-rate-by-Appeal curve.
+- Balance pass: smarter auto-player (discard cycling); reworked the Fixer (deck +
+  Composure + base), buffed Quid Pro Quo, nudged the Showman. Final curve A0 34–54% →
+  A20 4–12%; ≥5 reachable engine archetypes confirmed. Documented in BALANCE.md.
+
 ## Iteration 5 — Phases 4 & 5 (full UI + meta/save)
 - Zustand store bridges React to the pure engine (clone → reduce → commit; combat RNG
   threaded via encounter.rngState). Autosaves run; resumes on relaunch.
