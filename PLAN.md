@@ -70,8 +70,9 @@ Legend: `[ ]` todo · `[x]` done · `[~]` in progress.
 - [x] ran the sim; tuned `/content` + sim strategy to a sane curve; wrote BALANCE.md
 
 ## Phase 9 — QA + ship
-- [ ] all green: typecheck, tests, lint, build, preview (no console errors)
-- [ ] zero stubs/TODOs; every declared effect real
-- [ ] seeded-determinism test passes
-- [ ] walk full Definition of Done against running build
-- [ ] finalize README / DECISIONS / BALANCE / CONTENT; final commit + push
+- [x] all green: typecheck, tests (247), lint, build, preview serves 200 (no console errors)
+- [x] zero stubs/TODOs; effect resolver has compile-time exhaustiveness; per-card/Precedent
+      coverage tests exercise every effect
+- [x] seeded-determinism verified by tests (RNG, map, run, encounter, full-run)
+- [x] walked the full Definition of Done against the running build
+- [x] finalized README / DECISIONS / BALANCE / CONTENT

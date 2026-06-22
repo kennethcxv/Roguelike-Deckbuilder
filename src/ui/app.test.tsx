@@ -38,4 +38,19 @@ describe('App smoke', () => {
     fireEvent.click(screen.getByText(/^Deck \(/));
     expect(screen.getByRole('heading', { name: /Your Deck/ })).toBeInTheDocument();
   });
+
+  it('renders the trial screen and tutorial without console errors', () => {
+    const errSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    const store = useGame.getState();
+    store.startRun('litigator', 'custom', 'qa-trial-seed', 0);
+    const startId = useGame.getState().run!.reachableNodeIds[0]!;
+    useGame.getState().enterNode(startId);
+    render(<App />);
+    expect(useGame.getState().run!.screen).toBe('trial');
+    expect(screen.getByText('Rest Your Case')).toBeInTheDocument();
+    // first-run tutorial coachmark is present
+    expect(screen.getByText(/Welcome, Counselor/)).toBeInTheDocument();
+    expect(errSpy).not.toHaveBeenCalled();
+    errSpy.mockRestore();
+  });
 });

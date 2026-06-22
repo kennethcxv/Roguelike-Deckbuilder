@@ -2,6 +2,14 @@
 
 Iteration log. Newest at top.
 
+## Iteration 7 — Phase 9 (QA + ship)
+- Compile-time exhaustiveness check on the effect resolver (no op can be unhandled).
+- Per-card / per-Precedent coverage tests (179) exercise every effect against real content.
+- Verified production build serves (HTTP 200 for page + JS bundle); UI smoke tests cover
+  title→run→trial with zero console errors.
+- Wrote README.md and CONTENT.md; finalized DECISIONS/BALANCE. 247 tests green; typecheck,
+  lint, build all clean. Walked the full Definition of Done — all items satisfied.
+
 ## Iteration 6 — Phases 7 & 8 (content fill + balance)
 - Filled content to targets via parallel authoring + central merge + validation:
   84 cards, 46 Precedents, 16 events, 22 enemies (15 elite/boss), 13 Motions.

@@ -185,6 +185,11 @@ function applyEffect(ctx: EffectContext, effect: Effect): void {
       ctx.card = saved;
       return;
     }
+    default: {
+      // Compile-time guarantee that every declared Effect op has a handler.
+      const _exhaustive: never = effect;
+      return _exhaustive;
+    }
   }
 }
 

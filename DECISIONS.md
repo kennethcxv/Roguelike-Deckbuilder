@@ -59,6 +59,32 @@ each section.
 `Sustained`, `Overruled`, `Hearsay`, `Contempt`, `Rattled`, `Composure`, `Evidence`,
 `Leading`, `Witness`, `Stricken`. (Definitions in `content/keywords.ts`.)
 
+## UI, audio, persistence (Phases 4–6)
+- **State:** a Zustand store wraps the pure engine with a clone → reduce → commit pattern
+  (`structuredClone` the run, apply an engine reducer, set the new reference). Keeps the
+  engine pure while giving React new references. Combat RNG is threaded through the
+  encounter's serialized `rngState` for save/resume mid-trial.
+- **Keyword mechanics live in the engine** (canonical ids + per-stack magnitudes in
+  `engine/keywords.ts`); content owns each keyword's name/description/tone/decay. Defining
+  a keyword's *behavior* is mechanics, not "rebalancing," so this respects the
+  content-only rule for tuning/skinning.
+- **Persistence:** `localStorage` with a defensive migration that upgrades any old/partial
+  payload to the current shape; saved runs that reference now-missing content are
+  discarded rather than crashing.
+- **Appeal scaling:** Doubt targets ×(1 + 0.04·Appeal). Simple, legible ladder; tuned via
+  the sim.
+- **Audio:** all SFX/music synthesized at runtime (WebAudio), initialised on first user
+  gesture, no-ops where WebAudio is unavailable (tests/SSR).
+- **Juice gating:** the scoring cascade animates step-by-step; screen shake, confetti, and
+  number pops are gated by the reduce-motion / screen-shake settings.
+
+## Balance approach (Phase 8)
+- The sim's auto-player is "reasonable, not optimal"; reported win-rates are a floor.
+- High win-rates for assembled Precedent *pairs* (the "broken combos") are a design goal —
+  the ≥4 reachable engine archetypes — not defects. The pass targeted a sane curve (all
+  attorneys winnable at Appeal 0, declining to ~single digits at Appeal 20) and fixed the
+  one genuinely weak character (the Fixer) and card (Quid Pro Quo). See BALANCE.md.
+
 ## Meta & modes
 - **Appeals 0–20** ascension ladder of stacking modifiers.
 - Modes: **Standard**, **Daily Challenge** (seed = UTC date), **Custom Seed**.
